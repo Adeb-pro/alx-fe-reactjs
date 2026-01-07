@@ -6,6 +6,7 @@ import WelcomeMessage from "./components/WelcomeMessage.jsx";
 import Footer from "./components/Footer.jsx";
 import MainContent from "./components/MainContent.jsx";
 import Header from './components/Header.jsx'; 
+import UserProfile from './components/UserProfile.jsx';
 
 
 function App() {
@@ -36,6 +37,13 @@ function App() {
       </p>
       <p><WelcomeMessage /> </p>
       <Header />
+      <div>
+      <UserProfile
+        name="Alice"
+        age="25"
+        bio="Loves hiking and photography"
+      />
+    </div>
       <MainContent />
       <Footer />
     </>
