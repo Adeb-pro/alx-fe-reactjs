@@ -7,6 +7,8 @@ function Navbar() {
         padding: '15px',
         backgroundColor: '#333',
         display: 'flex',
+        justifyContent: 'space-between', // ✅ REQUIRED
+        alignItems: 'center',
         gap: '20px'
       }}
     >
