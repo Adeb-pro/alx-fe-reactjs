@@ -9,7 +9,7 @@ function MainContent() {
     >
       <h2 style={{ color: '#333' }}>Welcome!</h2>
       <p style={{ fontSize: '16px', lineHeight: '1.6' }}>
-        This application showcases my favorite cities and a short user profile.
+        I love to visit New York, Paris, and Tokyo.
       </p>
     </main>
   );
