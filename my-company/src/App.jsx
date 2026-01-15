@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './Navabar.jsx';
+import Navbar from './Navbar.jsx';
 import Home from './Home.jsx';
 import About from './About.jsx';
 import Services from './Services.jsx';
