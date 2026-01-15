@@ -2,13 +2,12 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import Navbar from './components/Navbar.jsx';
-import Footer from './components/Footer.jsx';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home.jsx';
-import About from './pages/About.jsx';
-import Services from './pages/Services.jsx';
-import Contact from './pages/Contact.jsx';
+import Navbar from './Navabar.jsx';
+import Home from './Home.jsx';
+import About from './About.jsx';
+import Services from './Services.jsx';
+import Contact from './Contact.jsx';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -35,19 +34,15 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <BrowserRouter>
+       <BrowserRouter>
       <Navbar />
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
-
-      <Footer />
     </BrowserRouter>
-
     </>
   )
 }
