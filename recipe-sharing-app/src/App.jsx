@@ -2,9 +2,9 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RecipeList from './components/RecipeList.jsx';
-import AddRecipeForm from './components/AddRecipeForm.jsx';
+import AddRecipeForm from './components/AddReceipeForm.jsx';
 import RecipeDetails from './components/RecipeDetails.jsx';
 
 
@@ -20,10 +20,10 @@ const [count, setCount] = useState(0);
         <Route
           path="/"
           element={
-            <>
+            <div>
               <AddRecipeForm />
               <RecipeList />
-            </>
+            </div>
           }
         />
         <Route path="/recipes/:id" element={<RecipeDetails />} />
