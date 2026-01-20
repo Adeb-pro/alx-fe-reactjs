@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RecipeList from './components/RecipeList.jsx';
 import AddRecipeForm from './components/AddReceipeForm.jsx';
 import RecipeDetails from './components/RecipeDetails.jsx';
+import SearchBar from './components/SearchBar.jsx';
 
 
 function App() {
@@ -21,6 +22,7 @@ const [count, setCount] = useState(0);
           path="/"
           element={
             <div>
+              <SearchBar />
               <AddRecipeForm />
               <RecipeList />
             </div>
