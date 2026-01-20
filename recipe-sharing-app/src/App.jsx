@@ -17,7 +17,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <Router>
       <h1>Recipe Sharing App</h1>
 
       <Routes>
@@ -32,7 +32,7 @@ function App() {
         />
         <Route path="/recipes/:id" element={<RecipeDetails />} />
       </Routes>
-    </div>
+    </Router>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
