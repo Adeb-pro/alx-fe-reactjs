@@ -2,6 +2,11 @@ import { useParams } from 'react-router-dom';
 import { useRecipeStore } from '../store/recipeStore';
 import EditRecipeForm from './EditRecipeForm';
 import DeleteRecipeButton from './DeleteRecipeButton';
+import FavoriteButton from './FavoriteButton';
+
+
+
+<FavoriteButton recipeId={recipe.id} />
 
 const RecipeDetails = () => {
   const { id } = useParams();

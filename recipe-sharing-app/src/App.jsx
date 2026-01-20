@@ -7,6 +7,9 @@ import RecipeList from './components/RecipeList.jsx';
 import AddRecipeForm from './components/AddReceipeForm.jsx';
 import RecipeDetails from './components/RecipeDetails.jsx';
 import SearchBar from './components/SearchBar.jsx';
+import FavoritesList from './components/FavoritesList';
+import RecommendationsList from './components/RecommendationsList';
+
 
 
 function App() {
@@ -25,6 +28,8 @@ const [count, setCount] = useState(0);
               <SearchBar />
               <AddRecipeForm />
               <RecipeList />
+              <FavoritesList />
+              <RecommendationsList />
             </div>
           }
         />
