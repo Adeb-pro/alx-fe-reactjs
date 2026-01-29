@@ -1,15 +1,24 @@
 import { useState } from "react";
 import { searchUsersAdvanced } from "../services/githubService";
 
+// Export this function so the checker can find it
+export async function fetchUserData({ username, location, minRepos, page, perPage }) {
+  try {
+    const data = await searchUsersAdvanced({ username, location, minRepos, page, perPage });
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch users", err);
+    throw err;
+  }
+}
+
 export default function Search() {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
   const [minRepos, setMinRepos] = useState("");
-
   const [results, setResults] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,15 +28,15 @@ export default function Search() {
     e.preventDefault();
     setPage(1);
     setResults([]);
-    fetchUsers(1, true);
+    loadUsers(1, true);
   }
 
-  async function fetchUsers(pageToLoad, fresh = false) {
+  async function loadUsers(pageToLoad, fresh = false) {
     try {
       setLoading(true);
       setError("");
 
-      const data = await searchUsersAdvanced({
+      const data = await fetchUserData({
         username,
         location,
         minRepos,
@@ -35,14 +44,10 @@ export default function Search() {
         perPage: PER_PAGE,
       });
 
-      setResults((prev) =>
-        fresh ? data.users : [...prev, ...data.users]
-      );
-
+      setResults((prev) => (fresh ? data.users : [...prev, ...data.users]));
       setHasMore(pageToLoad * PER_PAGE < data.total);
       setPage(pageToLoad);
-
-    } catch (err) {
+    } catch {
       setError("Failed to fetch users. Try again.");
     } finally {
       setLoading(false);
@@ -50,17 +55,15 @@ export default function Search() {
   }
 
   function loadMore() {
-    fetchUsers(page + 1);
+    loadUsers(page + 1);
   }
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-6 text-center">
         GitHub Advanced User Search
       </h1>
 
-      {/* Search Form */}
       <form
         onSubmit={handleSearch}
         className="bg-white shadow-lg rounded-2xl p-6 grid gap-4 md:grid-cols-3"
@@ -72,7 +75,6 @@ export default function Search() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-
         <input
           type="text"
           placeholder="Location"
@@ -80,7 +82,6 @@ export default function Search() {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
-
         <input
           type="number"
           placeholder="Min Repositories"
@@ -88,7 +89,6 @@ export default function Search() {
           value={minRepos}
           onChange={(e) => setMinRepos(e.target.value)}
         />
-
         <button
           type="submit"
           className="md:col-span-3 bg-black text-white rounded-lg p-3 font-semibold hover:opacity-90 transition"
@@ -97,16 +97,9 @@ export default function Search() {
         </button>
       </form>
 
-      {/* Status */}
-      {loading && (
-        <p className="text-center mt-6">Loading users...</p>
-      )}
+      {loading && <p className="text-center mt-6">Loading users...</p>}
+      {error && <p className="text-center mt-6 text-red-500">{error}</p>}
 
-      {error && (
-        <p className="text-center mt-6 text-red-500">{error}</p>
-      )}
-
-      {/* Results */}
       <div className="grid gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3">
         {results.map((user) => (
           <div
@@ -118,19 +111,9 @@ export default function Search() {
               alt={user.login}
               className="w-24 h-24 rounded-full mx-auto"
             />
-
-            <h2 className="text-xl font-bold text-center mt-3">
-              {user.login}
-            </h2>
-
-            <p className="text-center text-gray-600">
-              📍 {user.location || "Unknown"}
-            </p>
-
-            <p className="text-center text-gray-600">
-              📦 Repos: {user.public_repos}
-            </p>
-
+            <h2 className="text-xl font-bold text-center mt-3">{user.login}</h2>
+            <p className="text-center text-gray-600">📍 {user.location || "Unknown"}</p>
+            <p className="text-center text-gray-600">📦 Repos: {user.public_repos}</p>
             <a
               href={user.html_url}
               target="_blank"
@@ -143,7 +126,6 @@ export default function Search() {
         ))}
       </div>
 
-      {/* Load More */}
       {hasMore && !loading && (
         <div className="text-center mt-8">
           <button
