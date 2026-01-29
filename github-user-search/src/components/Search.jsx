@@ -1,115 +1,159 @@
 import { useState } from "react";
-import { fetchUsers } from "../services/githubService";
+import { searchUsersAdvanced } from "../services/githubService";
 
-const Search = () => {
+export default function Search() {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
-  const [repos, setRepos] = useState("");
-  const [users, setUsers] = useState([]);
+  const [minRepos, setMinRepos] = useState("");
+
+  const [results, setResults] = useState([]);
   const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSearch = async (e, newPage = 1) => {
-    e?.preventDefault();
-    setLoading(true);
-    setError(false);
+  const PER_PAGE = 10;
 
+  async function handleSearch(e) {
+    e.preventDefault();
+    setPage(1);
+    setResults([]);
+    fetchUsers(1, true);
+  }
+
+  async function fetchUsers(pageToLoad, fresh = false) {
     try {
-      const data = await fetchUsers({
+      setLoading(true);
+      setError("");
+
+      const data = await searchUsersAdvanced({
         username,
         location,
-        repos,
-        page: newPage,
+        minRepos,
+        page: pageToLoad,
+        perPage: PER_PAGE,
       });
 
-      setUsers(newPage === 1 ? data.items : [...users, ...data.items]);
-      setPage(newPage);
-    } catch {
-      setError(true);
+      setResults((prev) =>
+        fresh ? data.users : [...prev, ...data.users]
+      );
+
+      setHasMore(pageToLoad * PER_PAGE < data.total);
+      setPage(pageToLoad);
+
+    } catch (err) {
+      setError("Failed to fetch users. Try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  function loadMore() {
+    fetchUsers(page + 1);
+  }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 px-4">
+    <div className="max-w-5xl mx-auto p-6">
+      {/* Header */}
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        GitHub Advanced User Search
+      </h1>
+
+      {/* Search Form */}
       <form
-        onSubmit={(e) => handleSearch(e, 1)}
-        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        onSubmit={handleSearch}
+        className="bg-white shadow-lg rounded-2xl p-6 grid gap-4 md:grid-cols-3"
       >
         <input
-          className="p-2 border rounded"
           type="text"
           placeholder="Username"
+          className="border rounded-lg p-3 focus:outline-none focus:ring w-full"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
 
         <input
-          className="p-2 border rounded"
           type="text"
           placeholder="Location"
+          className="border rounded-lg p-3 focus:outline-none focus:ring w-full"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
 
         <input
-          className="p-2 border rounded"
           type="number"
-          placeholder="Min Repos"
-          value={repos}
-          onChange={(e) => setRepos(e.target.value)}
+          placeholder="Min Repositories"
+          className="border rounded-lg p-3 focus:outline-none focus:ring w-full"
+          value={minRepos}
+          onChange={(e) => setMinRepos(e.target.value)}
         />
 
         <button
-          className="bg-black text-white rounded px-4 py-2 hover:bg-gray-800"
           type="submit"
+          className="md:col-span-3 bg-black text-white rounded-lg p-3 font-semibold hover:opacity-90 transition"
         >
-          Search
+          Search Users
         </button>
       </form>
 
-      {loading && <p className="mt-6">Loading...</p>}
-      {error && <p className="mt-6 text-red-500">Looks like we cant find the user</p>}
+      {/* Status */}
+      {loading && (
+        <p className="text-center mt-6">Loading users...</p>
+      )}
 
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {users.map((user) => (
+      {error && (
+        <p className="text-center mt-6 text-red-500">{error}</p>
+      )}
+
+      {/* Results */}
+      <div className="grid gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3">
+        {results.map((user) => (
           <div
             key={user.id}
-            className="p-4 border rounded flex gap-4 items-center"
+            className="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition"
           >
             <img
               src={user.avatar_url}
               alt={user.login}
-              className="w-16 h-16 rounded-full"
+              className="w-24 h-24 rounded-full mx-auto"
             />
-            <div>
-              <h3 className="font-semibold">{user.login}</h3>
-              <a
-                href={user.html_url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 text-sm"
-              >
-                View Profile
-              </a>
-            </div>
+
+            <h2 className="text-xl font-bold text-center mt-3">
+              {user.login}
+            </h2>
+
+            <p className="text-center text-gray-600">
+              📍 {user.location || "Unknown"}
+            </p>
+
+            <p className="text-center text-gray-600">
+              📦 Repos: {user.public_repos}
+            </p>
+
+            <a
+              href={user.html_url}
+              target="_blank"
+              rel="noreferrer"
+              className="block mt-4 text-center bg-gray-900 text-white py-2 rounded-lg hover:opacity-90"
+            >
+              View Profile
+            </a>
           </div>
         ))}
       </div>
 
-      {users.length > 0 && !loading && (
-        <button
-          onClick={() => handleSearch(null, page + 1)}
-          className="mt-8 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          Load More
-        </button>
+      {/* Load More */}
+      {hasMore && !loading && (
+        <div className="text-center mt-8">
+          <button
+            onClick={loadMore}
+            className="bg-gray-800 text-white px-6 py-3 rounded-lg hover:opacity-90"
+          >
+            Load More
+          </button>
+        </div>
       )}
     </div>
   );
-};
-
-export default Search;
+}

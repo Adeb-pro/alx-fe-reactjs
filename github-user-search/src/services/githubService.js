@@ -1,32 +1,49 @@
-import axios from "axios";
+const BASE_URL = "https://api.github.com";
 
-export const fetchUsers = async ({
+export async function searchUsersAdvanced({
   username,
   location,
-  repos,
+  minRepos,
   page = 1,
-}) => {
-  let query = "";
+  perPage = 10,
+}) {
+  let queryParts = [];
 
-  if (username) query += `${username} `;
-  if (location) query += `location:${location} `;
-  if (repos) query += `repos:>=${repos}`;
+  if (username) queryParts.push(`${username} in:login`);
+  if (location) queryParts.push(`location:${location}`);
+  if (minRepos) queryParts.push(`repos:>=${minRepos}`);
 
-  const response = await axios.get(
-    "https://api.github.com/search/users",
-    {
-      params: {
-        q: query.trim(),
-        page,
-        per_page: 10,
-      },
-      headers: {
-        Authorization: import.meta.env.VITE_APP_GITHUB_API_KEY
-          ? `token ${import.meta.env.VITE_APP_GITHUB_API_KEY}`
-          : undefined,
-      },
-    }
+  const query = queryParts.join(" ");
+
+  const url = `${BASE_URL}/search/users?q=${encodeURIComponent(
+    query
+  )}&page=${page}&per_page=${perPage}`;
+
+  // 🔐 optional auth header (helps with rate limits)
+  const headers = import.meta.env.VITE_GITHUB_TOKEN
+    ? {
+        Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,
+      }
+    : {};
+
+  const res = await fetch(url, { headers });
+
+  if (!res.ok) {
+    throw new Error("GitHub search failed");
+  }
+
+  const data = await res.json();
+
+  // Fetch detailed profiles for richer UI data
+  const detailedUsers = await Promise.all(
+    data.items.map(async (user) => {
+      const r = await fetch(user.url, { headers });
+      return r.json();
+    })
   );
 
-  return response.data;
-};
+  return {
+    users: detailedUsers,
+    total: data.total_count,
+  };
+}
