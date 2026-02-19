@@ -1,5 +1,4 @@
-import { useState } from "react";
-import AddTodoForm from "./AddTodoForm";
+import React, { useState } from "react";
 
 const initialTodos = [
   { id: 1, text: "Learn React", completed: false },
@@ -7,32 +6,45 @@ const initialTodos = [
   { id: 3, text: "Build Todo App", completed: true },
 ];
 
-export default function TodoList() {
+function TodoList() {
   const [todos, setTodos] = useState(initialTodos);
+  const [input, setInput] = useState("");
 
-  const addTodo = (text) => {
-    setTodos((prev) => [
-      ...prev,
-      { id: Date.now(), text, completed: false },
+  const addTodo = (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setTodos([
+      ...todos,
+      { id: Date.now(), text: input, completed: false },
     ]);
+    setInput("");
   };
 
   const toggleTodo = (id) => {
-    setTodos((prev) =>
-      prev.map((t) =>
+    setTodos(
+      todos.map((t) =>
         t.id === id ? { ...t, completed: !t.completed } : t
       )
     );
   };
 
   const deleteTodo = (id) => {
-    setTodos((prev) => prev.filter((t) => t.id !== id));
+    setTodos(todos.filter((t) => t.id !== id));
   };
 
   return (
     <div>
       <h1>Todo List</h1>
-      <AddTodoForm onAdd={addTodo} />
+
+      <form onSubmit={addTodo}>
+        <input
+          aria-label="New todo"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button type="submit">Add</button>
+      </form>
 
       <ul>
         {todos.map((todo) => (
@@ -40,8 +52,9 @@ export default function TodoList() {
             <span
               onClick={() => toggleTodo(todo.id)}
               style={{
-                textDecoration: todo.completed ? "line-through" : "none",
-                cursor: "pointer",
+                textDecoration: todo.completed
+                  ? "line-through"
+                  : "none",
               }}
             >
               {todo.text}
@@ -56,3 +69,5 @@ export default function TodoList() {
     </div>
   );
 }
+
+export default TodoList;

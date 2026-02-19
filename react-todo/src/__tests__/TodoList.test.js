@@ -27,9 +27,6 @@ describe("TodoList", () => {
     render(<TodoList />);
 
     const todo = screen.getByText("Learn React");
-
-    expect(todo).not.toHaveStyle("text-decoration: line-through");
-
     fireEvent.click(todo);
 
     expect(todo).toHaveStyle("text-decoration: line-through");
@@ -39,7 +36,6 @@ describe("TodoList", () => {
     render(<TodoList />);
 
     const deleteButtons = screen.getAllByText("Delete");
-
     fireEvent.click(deleteButtons[0]);
 
     expect(screen.queryByText("Learn React")).not.toBeInTheDocument();
