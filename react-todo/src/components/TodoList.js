@@ -55,6 +55,7 @@ function TodoList() {
                 textDecoration: todo.completed
                   ? "line-through"
                   : "none",
+                cursor: "pointer",
               }}
             >
               {todo.text}
