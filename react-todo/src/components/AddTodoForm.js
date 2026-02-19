@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-function AddTodoForm({ onAdd }) {
+export default function AddTodoForm({ onAdd }) {
   const [text, setText] = useState("");
 
   const handleSubmit = (e) => {
@@ -13,14 +13,12 @@ function AddTodoForm({ onAdd }) {
   return (
     <form onSubmit={handleSubmit}>
       <input
-        type="text"
-        data-testid="todo-input"
+        aria-label="New todo"
         value={text}
         onChange={(e) => setText(e.target.value)}
+        placeholder="Add todo"
       />
       <button type="submit">Add</button>
     </form>
   );
 }
-
-export default AddTodoForm;
