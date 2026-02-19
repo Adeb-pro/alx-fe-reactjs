@@ -4,8 +4,8 @@ import AddTodoForm from "./AddTodoForm";
 function TodoList() {
   const [todos, setTodos] = useState([
     { id: 1, text: "Learn React", completed: false },
-    { id: 2, text: "Write Tests", completed: false },
-    { id: 3, text: "Build Projects", completed: false },
+{ id: 2, text: "Write Tests", completed: false },
+{ id: 3, text: "Build Projects", completed: false },
   ]);
 
   const addTodo = (text) => {
@@ -14,19 +14,24 @@ function TodoList() {
       text,
       completed: false,
     };
-    setTodos([...todos, newTodo]);
+
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
   };
 
   const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo.id === id
+          ? { ...todo, completed: !todo.completed }
+          : todo
       )
     );
   };
 
   const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    setTodos((prevTodos) =>
+      prevTodos.filter((todo) => todo.id !== id)
+    );
   };
 
   return (
