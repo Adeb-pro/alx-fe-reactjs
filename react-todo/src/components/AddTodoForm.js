@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 function AddTodoForm({ onAdd }) {
   const [input, setInput] = useState("");
